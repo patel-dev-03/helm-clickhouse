@@ -1,0 +1,17 @@
+replicas: 1
+image:
+  repository: yandex/clickhouse-server
+  tag: latest
+  pullPolicy: IfNotPresent
+resources:
+  requests:
+    cpu: 100m
+    memory: 256Mi
+  limits:
+    cpu: 200m
+    memory: 512Mi
+storage:
+  hot:
+    size: 5Gi
+  cold:
+    size: 10Gi
