@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clickhouse
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app: clickhouse
+  template:
+    metadata:
+      labels:
+        app: clickhouse
+    spec:
+      containers:
+      - name: clickhouse
+        image: "{{ .Values.image.repository }}:{{ .Values.image.tag }}"
+        imagePullPolicy: {{ .Values.image.pullPolicy }}
+        resources:
+          requests:
+            {}
+        volumeMounts:
+        - name: hot-storage
+          mountPath: /var/lib/clickhouse
+        - name: cold-storage
+          mountPath: /var/lib/clickhouse/cold
+        - name: config
+          mountPath: /etc/clickhouse-server/config.d/
+      volumes:
+      - name: hot-storage
+        persistentVolumeClaim:
+          claimName: hot-pvc
+      - name: cold-storage
+        persistentVolumeClaim:
+          claimName: cold-pvc
+      - name: config
+        configMap:
+          name: clickhouse-config
